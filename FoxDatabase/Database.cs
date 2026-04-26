@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace FoxDatabase;
 
-public class Database : IDisposable
+public class Database
 {
     private readonly string _connectionString;
     private bool _disposed = false;
@@ -62,23 +62,5 @@ public class Database : IDisposable
             results.Add(row);
         }
         return results;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                SqliteConnection.ClearAllPools();
-            }
-            _disposed = true;
-        }
     }
 }
