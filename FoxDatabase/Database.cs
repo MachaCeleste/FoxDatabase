@@ -5,7 +5,6 @@ namespace FoxDatabase;
 public class Database
 {
     private readonly string _connectionString;
-    private bool _disposed = false;
 
     public Database(string dbFilePath)
     {
