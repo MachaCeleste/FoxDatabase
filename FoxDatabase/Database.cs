@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Data.Sqlite;
 
 namespace FoxDatabase;
@@ -26,6 +27,8 @@ public class Database
         using var connection = new SqliteConnection(_connectionString);
         connection.Open();
 
+        if (Debugger.IsAttached) ValidateQuery(query, connection);
+
         using var command = connection.CreateCommand();
         command.CommandText = query;
 
@@ -42,6 +45,8 @@ public class Database
 
         using var connection = new SqliteConnection(_connectionString);
         connection.Open();
+
+        if (Debugger.IsAttached) ValidateQuery(query, connection);
 
         using var command = connection.CreateCommand();
         command.CommandText = query;
@@ -61,5 +66,20 @@ public class Database
             results.Add(row);
         }
         return results;
+    }
+
+    private void ValidateQuery(string query, SqliteConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = $"EXPLAIN {query}";
+        try
+        {
+            command.ExecuteNonQuery();
+        }
+        catch (SqliteException ex)
+        {
+            Debugger.Break();
+            throw;
+        }
     }
 }
